@@ -1,0 +1,16 @@
+version: '3.8'
+
+services:
+  vod-node-app:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - CLOUDFRONT_URL=${CLOUDFRONT_URL}
+      - CLOUDFRONT_PRIVATE_KEY=${CLOUDFRONT_PRIVATE_KEY}
+      - CLOUDFRONT_KEY_PAIR_ID=${CLOUDFRONT_KEY_PAIR_ID}
+    volumes:
+      - .:/app
+      - /app/node_modules

@@ -20,11 +20,15 @@
     "test:e2e": "jest --config ./test/jest-e2e.json"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.484.0",
     "@aws-sdk/cloudfront-signer": "^3.468.0",
+    "@aws-sdk/s3-request-presigner": "^3.484.0",
     "@nestjs/common": "^10.0.0",
     "@nestjs/config": "^3.1.1",
     "@nestjs/core": "^10.0.0",
     "@nestjs/platform-express": "^10.0.0",
+    "@prisma/client": "^5.7.1",
+    "prisma": "^5.7.1",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.8.1"
   },

@@ -3,4 +3,7 @@ export interface UploadRequest {
   title: string;
   description: string;
   categoryName: string;
+  length: number;
+  productionYear: number;
+  thumbnailFilename: string;
 }

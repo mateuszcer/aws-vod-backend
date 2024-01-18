@@ -8,18 +8,24 @@ export class VideoMetadataRepository {
 
   saveVideoMetadata(
     id: string,
-    fileName: string,
+    title: string,
     description: string,
     categoryRecordId: number,
+    length: number,
+    productionYear: number,
+    thumbnailId: string,
   ): Promise<Video> {
     return this.prisma.video.create({
       data: {
         uuid: id,
-        title: fileName,
+        title: title,
         description,
         categories: {
           connect: { id: categoryRecordId },
         },
+        length: length,
+        productionYear: productionYear,
+        thumbnailUuid: thumbnailId,
       },
     });
   }
@@ -30,10 +36,10 @@ export class VideoMetadataRepository {
     });
   }
 
-  findVideos(pageSize: number, skip: number): Promise<Video[]> {
+  findVideos(pageSize: number, skip2: number): Promise<Video[]> {
     return this.prisma.video.findMany({
       take: pageSize,
-      skip: skip,
+      skip: skip2,
     });
   }
 }

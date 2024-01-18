@@ -3,6 +3,7 @@ import { VideoApplicationService } from '../../service/video-application.service
 import { VideoWatchDTO } from 'src/videos/dto/video-watch.dto';
 import { UploadRequest } from '../request/upload.request';
 import { VideoUploadDTO } from 'src/videos/dto/video-upload.dto';
+import { VideoMetadataDTO } from '../dto/video-metadata.dto';
 
 @Controller('videos')
 export class VideoApplicationController {
@@ -15,16 +16,14 @@ export class VideoApplicationController {
 
   @Post('upload')
   async uploadVideo(@Body() body: UploadRequest): Promise<VideoUploadDTO> {
-    return await this.videoApplicationService.uploadVideo(
-      body.fileName,
-      body.title,
-      body.description,
-      body.categoryName,
-    );
+    return await this.videoApplicationService.uploadVideo(body);
   }
 
   @Get('')
-  async getVideos(pageSize: number, @Query('p') pageNumber: number) {
-    return await this.videoApplicationService.getVideos(20, pageNumber);
+  async getVideos(
+    @Query('ps') pageSize: number,
+    @Query('p') pageNumber: number,
+  ): Promise<VideoMetadataDTO[]> {
+    return await this.videoApplicationService.getVideos(pageSize, pageNumber);
   }
 }

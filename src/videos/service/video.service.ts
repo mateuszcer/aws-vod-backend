@@ -26,21 +26,36 @@ export class VideoService {
     });
   }
 
+  getImageUrl(imageId: string): string {
+    return getSignedUrlCloudfront({
+      dateLessThan: new Date(Date.now() + 60 * 60 * 12).toISOString(),
+      url: process.env.CLOUDFRONT_URL + '/' + imageId,
+      privateKey: process.env.CLOUDFRONT_PRIVATE_KEY,
+      keyPairId: process.env.CLOUDFRONT_KEY_PAIR_ID,
+    });
+  }
+
   getVideoMetadata(id: string): Promise<Video> {
     return this.videoRepository.findVideoMetadata(id);
   }
 
-  getUploadUrl(fileName: string, key: string): Promise<string> {
+  getVideoUploadUrl(fileName: string, key: string): Promise<string> {
     const extension: string = fileName.split('.').pop();
 
-    return this.getSignedUrl(key, extension);
+    return this.getSignedUrl(key, `video/${extension}`);
   }
 
-  getSignedUrl(key: string, extension: string): Promise<string> {
+  getImageUploadUrl(fileName: string, key: string): Promise<string> {
+    const extension: string = fileName.split('.').pop();
+
+    return this.getSignedUrl(key, `image/${extension}`);
+  }
+
+  getSignedUrl(key: string, contentType: string): Promise<string> {
     const command = new PutObjectCommand({
       Bucket: process.env.BUCKET_NAME,
       Key: key,
-      ContentType: `video/${extension}`,
+      ContentType: contentType,
     });
     return getS3SignedUrl(this.s3Client, command, {
       expiresIn: 60 * 2,
@@ -52,6 +67,9 @@ export class VideoService {
     description: string,
     id: string,
     categoryId: number,
+    length: number,
+    productionYear: number,
+    thumbnailId: string,
   ): Promise<Video> {
     try {
       return await this.videoRepository.saveVideoMetadata(
@@ -59,6 +77,9 @@ export class VideoService {
         title,
         description,
         categoryId,
+        length,
+        productionYear,
+        thumbnailId,
       );
     } catch (error) {
       console.error(`Error saving video metadata: ${error.message}`);

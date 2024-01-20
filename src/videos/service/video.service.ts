@@ -66,7 +66,7 @@ export class VideoService {
     title: string,
     description: string,
     id: string,
-    categoryId: number,
+    categoriesIds: number[],
     length: number,
     productionYear: number,
     thumbnailId: string,
@@ -76,7 +76,7 @@ export class VideoService {
         id,
         title,
         description,
-        categoryId,
+        categoriesIds,
         length,
         productionYear,
         thumbnailId,
@@ -86,8 +86,11 @@ export class VideoService {
     }
   }
 
-  async getVideos(pageSize: number, pageNumber: number): Promise<Video[]> {
+  async getVideos(pageSize: number, pageNumber: number, category?: string): Promise<Video[]> {
     const skip = pageSize * (pageNumber - 1);
+    if (category) {
+      return this.videoRepository.findVideosByCategory(pageSize, skip, category);
+    }
     return this.videoRepository.findVideos(pageSize, skip);
   }
 }

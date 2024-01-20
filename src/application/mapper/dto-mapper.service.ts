@@ -14,6 +14,7 @@ export class DtoMapperService {
       videoId: video.uuid,
       productionYear: video.productionYear,
       length: video.length,
+      categories: [],
     };
   }
 }

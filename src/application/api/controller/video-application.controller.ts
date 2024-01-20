@@ -21,9 +21,14 @@ export class VideoApplicationController {
 
   @Get('')
   async getVideos(
+    @Query('category') category: string,
     @Query('ps') pageSize: number,
     @Query('p') pageNumber: number,
   ): Promise<VideoMetadataDTO[]> {
-    return await this.videoApplicationService.getVideos(pageSize, pageNumber);
+    return await this.videoApplicationService.getVideos(
+      pageSize,
+      pageNumber,
+      category,
+    );
   }
 }

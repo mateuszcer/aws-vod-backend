@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Video } from '@prisma/client';
+import { Category, Video } from '@prisma/client';
 import { PrismaService } from 'src/shared/prisma.service';
 
 @Injectable()
@@ -10,7 +10,7 @@ export class VideoMetadataRepository {
     id: string,
     title: string,
     description: string,
-    categoryRecordId: number,
+    categoriesIds: number[],
     length: number,
     productionYear: number,
     thumbnailId: string,
@@ -21,7 +21,9 @@ export class VideoMetadataRepository {
         title: title,
         description,
         categories: {
-          connect: { id: categoryRecordId },
+          connect: categoriesIds.map((categoryId: number) => {
+            return { id: categoryId };
+          }),
         },
         length: length,
         productionYear: productionYear,
@@ -41,5 +43,31 @@ export class VideoMetadataRepository {
       take: pageSize,
       skip: skip2,
     });
+  }
+
+  findVideosByCategory(
+    pageSize: number,
+    skip2: number,
+    category: string,
+  ): Promise<Video[]> {
+    return this.prisma.video.findMany({
+      take: pageSize,
+      skip: skip2,
+      where: {
+        categories: {
+          some: {
+            name: category,
+          },
+        },
+      },
+    });
+  }
+
+  getCategories(videoId: string): Promise<Category[]> {
+    return this.prisma.video
+      .findUnique({
+        where: { uuid: videoId },
+      })
+      .categories();
   }
 }

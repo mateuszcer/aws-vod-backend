@@ -15,4 +15,11 @@ export class CategoryService {
 
     return categoryRecord;
   }
+
+  async getCategoriesOrCreateNew(categoryNames: string[]): Promise<Category[]> {
+    const categoryPromises: Promise<Category>[] = categoryNames.map(
+      async (categoryName) => await this.getCategoryOrCreateNew(categoryName),
+    );
+    return Promise.all(categoryPromises);
+  }
 }

@@ -15,6 +15,6 @@ import { PrismaService } from 'src/shared/prisma.service';
     CategoryRepository,
     PrismaService,
   ],
-  exports: [VideoService, CategoryService],
+  exports: [VideoService, CategoryService, VideoMetadataRepository],
 })
 export class VideosModule {}

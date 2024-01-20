@@ -8,6 +8,7 @@ import { VideoService } from 'src/videos/service/video.service';
 import { DtoMapperService } from '../mapper/dto-mapper.service';
 import { VideoMetadataDTO } from '../api/dto/video-metadata.dto';
 import { UploadRequest } from '../api/request/upload.request';
+import { VideoMetadataRepository } from 'src/videos/repository/video-metadata.repository';
 
 @Injectable()
 export class VideoApplicationService {
@@ -15,6 +16,7 @@ export class VideoApplicationService {
     private videoService: VideoService,
     private categoryService: CategoryService,
     private dtoMapperService: DtoMapperService,
+    private videoRepository: VideoMetadataRepository,
   ) {}
 
   async watchVideo(id: string): Promise<VideoWatchDTO> {
@@ -29,8 +31,8 @@ export class VideoApplicationService {
   }
 
   async uploadVideo(uploadRequest: UploadRequest): Promise<VideoUploadDTO> {
-    const categoryRecord = await this.categoryService.getCategoryOrCreateNew(
-      uploadRequest.categoryName,
+    const categoryRecords = await this.categoryService.getCategoriesOrCreateNew(
+      uploadRequest.categories,
     );
 
     const videoId: string = randomUUID();
@@ -51,7 +53,7 @@ export class VideoApplicationService {
       uploadRequest.title,
       uploadRequest.description,
       videoId,
-      categoryRecord.id,
+      categoryRecords.map((category) => category.id),
       uploadRequest.length,
       uploadRequest.productionYear,
       thumbnailId,
@@ -67,15 +69,25 @@ export class VideoApplicationService {
   async getVideos(
     pageSize: number = 20,
     pageNumber: number = 1,
+    category?: string,
   ): Promise<VideoMetadataDTO[]> {
-    return (
-      await this.videoService.getVideos(pageSize - 0, pageNumber - 0)
-    ).map((video) => {
-      const videoDto = this.dtoMapperService.mapVideoToDTO(video);
-      videoDto.thumbnailUrl = this.videoService.getImageUrl(
-        video.thumbnailUuid,
-      );
-      return videoDto;
-    });
+    return Promise.all(
+      (
+        await this.videoService.getVideos(
+          pageSize - 0,
+          pageNumber - 0,
+          category,
+        )
+      ).map(async (video) => {
+        const videoDto = this.dtoMapperService.mapVideoToDTO(video);
+        videoDto.thumbnailUrl = this.videoService.getImageUrl(
+          video.thumbnailUuid,
+        );
+        videoDto.categories = await this.videoRepository.getCategories(
+          video.uuid,
+        );
+        return videoDto;
+      }),
+    );
   }
 }

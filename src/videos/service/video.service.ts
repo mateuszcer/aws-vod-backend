@@ -86,10 +86,18 @@ export class VideoService {
     }
   }
 
-  async getVideos(pageSize: number, pageNumber: number, category?: string): Promise<Video[]> {
+  async getVideos(
+    pageSize: number,
+    pageNumber: number,
+    category?: string,
+  ): Promise<Video[]> {
     const skip = pageSize * (pageNumber - 1);
     if (category) {
-      return this.videoRepository.findVideosByCategory(pageSize, skip, category);
+      return this.videoRepository.findVideosByCategory(
+        pageSize,
+        skip,
+        category,
+      );
     }
     return this.videoRepository.findVideos(pageSize, skip);
   }

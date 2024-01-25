@@ -71,21 +71,40 @@ export class VideoApplicationService {
     pageNumber: number = 1,
     category?: string,
   ): Promise<VideoMetadataDTO[]> {
+    const videos: Video[] = await this.videoService.getVideos(
+      pageSize - 0,
+      pageNumber - 0,
+      category,
+    );
+
+    return this.mapVideosToDtos(videos);
+  }
+
+  async getVideosByTitle(
+    title: string,
+    pageSize: number = 20,
+    pageNumber: number = 1,
+  ): Promise<VideoMetadataDTO[]> {
+    const videos: Video[] = await this.videoService.getVideosByTitle(
+      title,
+      pageSize - 0,
+      pageNumber - 0,
+    );
+    return this.mapVideosToDtos(videos);
+  }
+
+  private async mapVideosToDtos(videos: Video[]): Promise<VideoMetadataDTO[]> {
     return Promise.all(
-      (
-        await this.videoService.getVideos(
-          pageSize - 0,
-          pageNumber - 0,
-          category,
-        )
-      ).map(async (video) => {
+      videos.map(async (video) => {
         const videoDto = this.dtoMapperService.mapVideoToDTO(video);
         videoDto.thumbnailUrl = this.videoService.getImageUrl(
           video.thumbnailUuid,
         );
+
         videoDto.categories = await this.videoRepository.getCategories(
           video.uuid,
         );
+
         return videoDto;
       }),
     );

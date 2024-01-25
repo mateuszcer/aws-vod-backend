@@ -70,4 +70,21 @@ export class VideoMetadataRepository {
       })
       .categories();
   }
+
+  findVideosByTitle(
+    title: string,
+    pageSize: number,
+    skip: number,
+  ): Promise<Video[]> {
+    return this.prisma.video.findMany({
+      take: pageSize,
+      skip: skip,
+      where: {
+        title: {
+          contains: title,
+          mode: 'insensitive',
+        },
+      },
+    });
+  }
 }

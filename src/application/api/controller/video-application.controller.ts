@@ -1,13 +1,4 @@
-import {
-  Body,
-  Controller,
-  Get,
-  Header,
-  Post,
-  Query,
-  Req,
-  UseGuards,
-} from '@nestjs/common';
+import { Body, Controller, Get, Post, Query, UseGuards } from '@nestjs/common';
 import { VideoApplicationService } from '../../service/video-application.service';
 import { VideoWatchDTO } from 'src/videos/dto/video-watch.dto';
 import { UploadRequest } from '../request/upload.request';
@@ -31,9 +22,7 @@ export class VideoApplicationController {
   }
 
   @Get('')
-  @Header('Access-Control-Allow-Origin', '*')
   async getVideos(
-    @Req() request: Request,
     @Query('category') category: string,
     @Query('ps') pageSize: number,
     @Query('p') pageNumber: number,
@@ -42,6 +31,19 @@ export class VideoApplicationController {
       pageSize,
       pageNumber,
       category,
+    );
+  }
+
+  @Get('search')
+  async searchVideos(
+    @Query('q') query: string,
+    @Query('ps') pageSize: number,
+    @Query('p') pageNumber: number,
+  ): Promise<VideoMetadataDTO[]> {
+    return await this.videoApplicationService.getVideosByTitle(
+      query,
+      pageSize,
+      pageNumber,
     );
   }
 }

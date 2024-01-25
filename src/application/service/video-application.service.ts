@@ -80,12 +80,12 @@ export class VideoApplicationService {
     return this.mapVideosToDtos(videos);
   }
 
-  async getVideosByTitle(
+  async getVideosByQuery(
     title: string,
     pageSize: number = 20,
     pageNumber: number = 1,
   ): Promise<VideoMetadataDTO[]> {
-    const videos: Video[] = await this.videoService.getVideosByTitle(
+    const videos: Video[] = await this.videoService.getVideosByQuery(
       title,
       pageSize - 0,
       pageNumber - 0,

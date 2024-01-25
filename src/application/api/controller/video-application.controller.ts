@@ -40,7 +40,7 @@ export class VideoApplicationController {
     @Query('ps') pageSize: number,
     @Query('p') pageNumber: number,
   ): Promise<VideoMetadataDTO[]> {
-    return await this.videoApplicationService.getVideosByTitle(
+    return await this.videoApplicationService.getVideosByQuery(
       query,
       pageSize,
       pageNumber,

@@ -71,8 +71,8 @@ export class VideoMetadataRepository {
       .categories();
   }
 
-  findVideosByTitle(
-    title: string,
+  findVideosByTitleAndCategories(
+    query: string,
     pageSize: number,
     skip: number,
   ): Promise<Video[]> {
@@ -80,10 +80,24 @@ export class VideoMetadataRepository {
       take: pageSize,
       skip: skip,
       where: {
-        title: {
-          contains: title,
-          mode: 'insensitive',
-        },
+        OR: [
+          {
+            title: {
+              contains: query,
+              mode: 'insensitive',
+            },
+          },
+          {
+            categories: {
+              some: {
+                name: {
+                  contains: query,
+                  mode: 'insensitive',
+                },
+              },
+            },
+          },
+        ],
       },
     });
   }
